@@ -1,0 +1,7 @@
+{
+  "name": "GTO",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <div class="inicio-sesion">
+      <ion-title>Iniciar Sesión</ion-title>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <div class="card-content-container">
+        <img src="assets/icon/inicio_sesion.avif" alt="inicio sesion" class="img">
+      </div>
+      <ion-item>
+        <ion-input [(ngModel)]="username" placeholder="Correo Electrónico" type="email" label="Correo" labelPlacement="floating" required></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input [(ngModel)]="password" placeholder="Contraseña" type="password" label="Contraseña" labelPlacement="floating" required></ion-input>
+      </ion-item>
+      <ion-button expand="block" (click)="ingresar()">Iniciar Sesión</ion-button>
+      <ion-button expand="block" routerLink="/registro">Registrarse</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

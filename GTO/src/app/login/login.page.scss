@@ -1,0 +1,23 @@
+@media only screen and (max-width: 768px) {
+    .img {
+      width: 300px;
+    }
+    
+    .card-content-container, .inicio-sesion {
+      justify-content: center;
+      text-align: center;
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    .img {
+      width: 200px;
+    }
+  
+    .card-content-container {
+      padding: 10px;
+    }
+  }
+  
+
+
