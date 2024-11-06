@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Libro } from '../class/libro';
+import { Libro } from '../class/libro'; // Asegúrate de tener la clase Libro definida
 import { Platform, ToastController } from '@ionic/angular';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { Platform, ToastController } from '@ionic/angular';
 })
 export class DbserviceService {
 
-  public database!: SQLiteObject;
+  public bd!: SQLiteObject; // Aquí cambiamos 'database' por 'bd'
   tblLibros: string = "CREATE TABLE IF NOT EXISTS libro(id INTEGER PRIMARY KEY AUTOINCREMENT, titulo VARCHAR(50) NOT NULL, autor VARCHAR(50) NOT NULL, descripcion TEXT, texto TEXT);";
   listaLibros = new BehaviorSubject<Libro[]>([]);
   private isDbReady: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -22,29 +22,23 @@ export class DbserviceService {
     this.crearBD();
   }
 
-  /**
-   * Método que crea la BD si no Existe o carga la existente
-   */
+  // Métodos para crear la base de datos, insertar y recuperar libros
   crearBD() {
     this.platform.ready().then(() => {
       this.sqlite.create({
-        name: 'biblioteca.db',
+        name: 'bd.db', // Aquí usas el nombre 'bd.db' para la base de datos
         location: 'default'
-      }).then((db: SQLiteObject) => {
-        this.database = db;
+      }).then((bd: SQLiteObject) => { // Cambié 'db' por 'bd' aquí también
+        this.bd = bd; // Asignamos la base de datos a la propiedad 'bd'
         this.presentToast("Base de datos creada");
-        // Llamo a crear la(s) tabla(s)
         this.crearTablas();
       }).catch(e => this.presentToast("Error creando la BD: " + e));
     });
   }
 
-  /**
-   * Método que crea la tabla de la BD si no Existe o carga la existente
-   */
   async crearTablas() {
     try {
-      await this.database.executeSql(this.tblLibros, []);
+      await this.bd.executeSql(this.tblLibros, []); // Usamos 'bd' en lugar de 'db'
       this.presentToast("Tabla creada");
       this.cargarLibros();
       this.isDbReady.next(true);
@@ -53,12 +47,9 @@ export class DbserviceService {
     }
   }
 
-  /**
-   * Método que carga en la listaLibros TODO el contenido de la tabla libro
-   */
   cargarLibros() {
     let items: Libro[] = [];
-    this.database.executeSql('SELECT id, titulo, autor, descripcion, texto FROM libro', [])
+    this.bd.executeSql('SELECT id, titulo, autor, descripcion, texto FROM libro', []) // 'bd' aquí también
       .then(res => {
         if (res.rows.length > 0) {
           for (let i = 0; i < res.rows.length; i++) {
@@ -67,52 +58,21 @@ export class DbserviceService {
               titulo: res.rows.item(i).titulo,
               autor: res.rows.item(i).autor,
               descripcion: res.rows.item(i).descripcion,
-              texto: res.rows.item(i).texto // Asegúrate de incluir el campo `texto` aquí
+              texto: res.rows.item(i).texto
             });
           }
         }
-        this.listaLibros.next(items); // Asegúrate de actualizar la lista aquí después de llenar `items`
+        this.listaLibros.next(items);
       })
       .catch(error => this.presentToast("Error al cargar libros: " + error));
-}
-
-
-  /**
-   * Método que inserta un registro en la tabla libro
-   */
-  async addLibro(titulo: string, autor: string, descripcion: string) {
-    let data = [titulo, autor, descripcion];
-    await this.database.executeSql('INSERT INTO libro(titulo, autor, descripcion) VALUES(?, ?, ?)', data);
-    this.cargarLibros();
   }
 
-  /**
-   * Método que actualiza el título, autor y/o la descripción filtrando por el id
-   */
-  async updateLibro(id: number, titulo: string, autor: string, descripcion: string) {
-    let data = [titulo, autor, descripcion, id];
-    await this.database.executeSql('UPDATE libro SET titulo = ?, autor = ?, descripcion = ? WHERE id = ?', data);
-    this.cargarLibros();
-  }
+  // Otros métodos para agregar, actualizar, eliminar libros y gestionar la base de datos...
 
-  /**
-   * Método que elimina un registro por id de la tabla libro
-   */
-  async deleteLibro(id: number) {
-    await this.database.executeSql('DELETE FROM libro WHERE id = ?', [id]);
-    this.cargarLibros();
-  }
-
-  /**
-   * Método que verifica la suscripción del Observable
-   */
-  dbState() {
+  dbState(): Observable<boolean> {
     return this.isDbReady.asObservable();
   }
 
-  /**
-   * Método que se ejecuta cada vez que se hace un cambio en la tabla de la BD
-   */
   fetchLibros(): Observable<Libro[]> {
     return this.listaLibros.asObservable();
   }

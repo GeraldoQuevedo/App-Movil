@@ -1,262 +1,45 @@
 <ion-header>
   <ion-toolbar>
     <div class="home">
-      <ion-title>Bibliotecapp</ion-title>
+      <ion-title>BibliotecApp</ion-title>
     </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- Buscar libro -->
-  <ion-card>
-    <ion-card-header>
-      <ion-item lines="none">
-        <ion-input slot="start" type="text" placeholder="Buscar" color="primary"></ion-input>
-        <ion-icon name="search-outline" slot="end" color="primary"></ion-icon>
-      </ion-item>
-    </ion-card-header>
-  </ion-card>
+  <!-- Barra de búsqueda -->
+  <div class="search-bar">
+    <ion-item lines="none">
+      <ion-input [(ngModel)]="searchQuery" type="text" placeholder="Buscar libro por título" color="primary"></ion-input>
+      <ion-icon name="search-outline" slot="end" color="primary" (click)="buscarLibros()"></ion-icon>
+    </ion-item>
+  </div>
+
+  <!-- Mostrar resultados de búsqueda -->
   <div class="books">
     <div class="books-grid">
-      <!-- Primer libro -->
-      <ion-list>
-  <ion-item *ngFor="let libro of libros">
-    <ion-label>
-      <h2>{{ libro.titulo }}</h2>
-      <p>{{ libro.autor }}</p>
-      <p>{{ libro.descripcion }}</p>
-      <p>{{ libro.texto }}</p>
-    </ion-label>
-  </ion-item>
-</ion-list>
+      <ion-card *ngFor="let libro of libros">
+        <div class="cover-container">
+          <img [src]="libro.cover" alt="{{ libro.title }}">
+        </div>
 
-      <ion-card>
         <ion-card-header>
-          <ion-item lines="none">
-            <ion-avatar slot="start">
-              <img src="assets/icon/crimen_y_castigo.jpg" alt="Crimen y Castigo">
-            </ion-avatar>
-            <ion-label>
-              <ion-card-title>Crimen y Castigo</ion-card-title>
-              <ion-card-subtitle>Fiódor Dostoyevski</ion-card-subtitle>
-            </ion-label>
-          </ion-item>
+          <ion-card-title>{{ libro.title }}</ion-card-title>
+          <ion-card-subtitle *ngIf="libro.author_name">{{ libro.author_name }}</ion-card-subtitle>
         </ion-card-header>
 
         <ion-card-content>
-          <div class="card-content-container">
-            <img src="assets/icon/crimen_y_castigo.jpg" alt="Crimen y Castigo" class="img">
-            <div class="book-description">
-              La historia narra la vida de Rodión Raskólnikov, un estudiante en la capital de la Rusia Imperial, San Petersburgo,
-              que se ve obligado a suspender sus estudios por la miseria en la que se encuentra, a pesar de los esfuerzos de su
-              madre Pulqueria y su hermana Dunia para enviarle dinero.
-            </div>
+          <div class="book-description">
+            <p>{{ libro.first_publish_year ? 'Año de publicación: ' + libro.first_publish_year : 'Año de publicación no disponible' }}</p>
+            <p>{{ libro.description ? libro.description : 'Descripción no disponible' }}</p>
           </div>
         </ion-card-content>
 
-        <div class="card-footer">
-          <div class="card-footer-buttons">
-            <ion-button fill="clear">Arrendar</ion-button>
-            <ion-button fill="clear">Comprar</ion-button>
-          </div>
+        <div class="card-footer-buttons">
+          <ion-button fill="clear">Arrendar</ion-button>
+          <ion-button fill="clear">Comprar</ion-button>
         </div>
       </ion-card>
-
-      <!-- Segundo libro -->
-      <ion-card>
-        <ion-card-header>
-          <ion-item lines="none">
-            <ion-avatar slot="start">
-              <img src="assets/icon/Quijote.jpg" alt="Don Quijote De La Mancha">
-            </ion-avatar>
-            <ion-label>
-              <ion-card-title>Don Quijote De La Mancha</ion-card-title>
-              <ion-card-subtitle>Miguel de Cervantes Saavedra</ion-card-subtitle>
-            </ion-label>
-          </ion-item>
-        </ion-card-header>
-
-        <ion-card-content>
-          <div class="card-content-container">
-            <img src="assets/icon/Quijote.jpg" alt="Don Quijote De La Mancha" class="img">
-            <div class="book-description">
-              El ingenioso hidalgo don Quijote de la Mancha narra las aventuras de Alonso Quijano, 
-              un hidalgo pobre que de tanto leer novelas de caballería acaba enloqueciendo y creyendo ser un caballero andante, 
-              nombrándose a sí mismo como don Quijote de la Mancha.
-            </div>
-          </div>
-        </ion-card-content>
-
-        <div class="card-footer">
-          <div class="card-footer-buttons">
-            <ion-button fill="clear">Arrendar</ion-button>
-            <ion-button fill="clear">Comprar</ion-button>
-          </div>
-        </div>
-      </ion-card>
-
-      <!-- Tercer libro -->
-      <ion-card>
-      <ion-card-header>
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img src="assets/icon/Charles.jpg" alt="Charles Baudelaire">
-          </ion-avatar>
-          <ion-label>
-            <ion-card-title>Las Flores Del Mal</ion-card-title>
-            <ion-card-subtitle>Charles Baudelaire</ion-card-subtitle>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="card-content-container">
-          <img src="assets/icon/Charles.jpg" alt="Charles Baudelaire" class="img">
-          <div class="book-description">
-            En este libro Baudelaire se centra en la descripción del mal, 
-            en la apología de lo satánico y en el tratamiento del hombre 
-            como ser miserable y perverso y poseedor del cuerpo como instrumento para todo tipo de vicios.
-          </div>
-        </div>
-      </ion-card-content>
-
-      <div class="card-footer">
-        <div class="card-footer-buttons">
-          <ion-button fill="clear">Arrendar</ion-button>
-          <ion-button fill="clear">Comprar</ion-button>
-        </div>
-      </div>
-    </ion-card>
-        <!-- Cuarto Libro -->
-    <ion-card>
-      <ion-card-header>
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img src="assets/icon/RomeoyJulieta.webp" alt="Crimen y Castigo">
-          </ion-avatar>
-          <ion-label>
-            <ion-card-title>Romeo y Julieta</ion-card-title>
-            <ion-card-subtitle>William Schakespeare</ion-card-subtitle>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="card-content-container">
-          <img src="assets/icon/RomeoyJulieta.webp" alt="RomeoyJulieta" class="img">
-          <div class="book-description">
-            Una de las historias románticas que más traspaso en el tiempo más 
-            allá de los limites de su época para asentarse en la mente popular de todo el mundo. 
-            Donde dos jóvenes se enamoran en la flor de su edad, ambos los menores de dos familias enemigas,
-            adineradas y con un odio y un rencor que va a hacer su relación imposible, una obra que solo pudo ser pensada por la genialidad de su autor.
-          </div>
-        </div>
-      </ion-card-content>
-
-      <div class="card-footer">
-        <div class="card-footer-buttons">
-          <ion-button fill="clear">Arrendar</ion-button>
-          <ion-button fill="clear">Comprar</ion-button>
-        </div>
-      </div>
-    </ion-card>
-
-    <!-- Quinto libro -->
-
-    <ion-card>
-      <ion-card-header>
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img src="assets/icon/La_Metamorfosis.webp" alt="La Metamorfosis">
-          </ion-avatar>
-          <ion-label>
-            <ion-card-title>La Metamorfosis</ion-card-title>
-            <ion-card-subtitle>Franz Kafka</ion-card-subtitle>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="card-content-container">
-          <img src="assets/icon/La_Metamorfosis.webp" alt="La Metamorfosis" class="img">
-          <div class="book-description">
-          La Metamorfosis es una obra escrita por Franz Kafka. En ella el autor retrata la vida del joven Gregorio Samsa, 
-          un modesto comerciante viajero que sin motivo aparente, despertó un día convertido en insecto.
-          </div>
-        </div>
-      </ion-card-content>
-
-      <div class="card-footer">
-        <div class="card-footer-buttons">
-          <ion-button fill="clear">Arrendar</ion-button>
-          <ion-button fill="clear">Comprar</ion-button>
-        </div>
-      </div>
-    <!-- Sexto libro -->
-    </ion-card>
-      <ion-card>
-      <ion-card-header>
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img src="assets/icon/La_Liada.jpg" alt="La Liada">
-          </ion-avatar>
-          <ion-label>
-            <ion-card-title>La Liada</ion-card-title>
-            <ion-card-subtitle>Homero</ion-card-subtitle>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
-    <!-- Septimo libro -->
-      <ion-card-content>
-        <div class="card-content-container">
-          <img src="assets/icon/La_Liada.jpg" alt="La Liada" class="img">
-          <div class="book-description">
-          En torno a Homero todo es misterioso, para unos personaje tan legendario y mitológico como el mismo Aquiles o cualquiera de sus héroes, 
-          para otros una figura histórica, que vivió alrededor del siglo VIII a.C. en Grecia, 
-          autor de los dos poemas más importantes de la Antigüedad: La Ilíada y La Odisea.
-          </div>
-        </div>
-      </ion-card-content>
-
-      <div class="card-footer">
-        <div class="card-footer-buttons">
-          <ion-button fill="clear">Arrendar</ion-button>
-          <ion-button fill="clear">Comprar</ion-button>
-        </div>
-      </div>
-    </ion-card>
-    <!-- Octavo libro -->
-    <ion-card>
-      <ion-card-header>
-        <ion-item lines="none">
-          <ion-avatar slot="start">
-            <img src="assets/icon/OrgulloyPrejuicio.jpg" alt="Orgullo y Prejuicio">
-          </ion-avatar>
-          <ion-label>
-            <ion-card-title>Orgullo y Prejuicio</ion-card-title>
-            <ion-card-subtitle>Jane Austen</ion-card-subtitle>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
-
-      <ion-card-content>
-        <div class="card-content-container">
-          <img src="assets/icon/OrgulloyPrejuicio.jpg" alt="Orgullo y Prejuicio" class="img">
-          <div class="book-description">
-          En torno a Homero todo es misterioso, para unos personaje tan legendario y mitológico como el mismo Aquiles o cualquiera de sus héroes, 
-          para otros una figura histórica, que vivió alrededor del siglo VIII a.C. en Grecia, 
-          autor de los dos poemas más importantes de la Antigüedad: La Ilíada y La Odisea.
-          </div>
-        </div>
-      </ion-card-content>
-
-      <div class="card-footer">
-        <div class="card-footer-buttons">
-          <ion-button fill="clear">Arrendar</ion-button>
-          <ion-button fill="clear">Comprar</ion-button>
-        </div>
-      </div>
-    </ion-card>
     </div>
   </div>
 </ion-content>
