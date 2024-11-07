@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
-import { DbserviceService } from '../services/bd.service';
-
 
 @Component({
   selector: 'app-login',
@@ -12,14 +10,15 @@ import { DbserviceService } from '../services/bd.service';
 export class LoginPage {
   username: string = '';
   password: string = '';
+  
+  // Regex de validación para el correo electrónico
+  emailPattern: RegExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   constructor(
     private router: Router,
     private alertController: AlertController,
-    private bdService: DbserviceService,
     private loadingController: LoadingController
-  ) { }
-  
+  ) {}
 
   async ingresar() {
     console.log('Iniciar sesión presionado');
@@ -37,9 +36,12 @@ export class LoginPage {
     const isAuthenticated = this.authenticateUser(this.username, this.password);
 
     if (isAuthenticated) {
-      // Si la autenticación es exitosa, muestra la alerta y redirige a la página Home
+      // Si la autenticación es exitosa, almacena el correo en localStorage
+      localStorage.setItem('userEmail', this.username);
+
+      // Muestra la alerta de bienvenida
       await this.presentAlert();
-      this.router.navigate(['/home']); // Navegación suave
+      this.router.navigate(['/home']);
     } else {
       console.log('Credenciales incorrectas');
       alert('Usuario o contraseña incorrectos.');
@@ -50,10 +52,7 @@ export class LoginPage {
 
   // Método para autenticar al usuario
   authenticateUser(username: string, password: string): boolean {
-    if (username === 'usuario@correo.com' && password === '123456') {
-      return true; // Autenticación exitosa
-    }
-    return false; // Fallo en la autenticación
+    return username && password ? true : false;
   }
 
   // Método para mostrar la alerta de bienvenida
@@ -61,13 +60,21 @@ export class LoginPage {
     const alert = await this.alertController.create({
       header: 'Bienvenido',
       message: 'Bienvenido usuario a la pagina BibliotecApp',
-      buttons: ['OK']
+      buttons: ['OK'],
     });
 
     await alert.present();
-    // delay para que la alerta dure unos segundos
     setTimeout(() => {
-      alert.dismiss(); // Cierra la alerta después de 2 segundos
+      alert.dismiss();
     }, 3000);
+  }
+
+  // Método para cerrar sesión (Logout)
+  logout() {
+    // Eliminar el correo del usuario de localStorage
+    localStorage.removeItem('userEmail');
+    
+    // Redirigir a la página de inicio de sesión
+    this.router.navigate(['/login']);
   }
 }

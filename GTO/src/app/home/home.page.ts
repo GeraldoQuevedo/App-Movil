@@ -1,34 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import { OpenLibraryService } from '../services/open-library.service'; // Asegúrate de que esta ruta sea correcta
-import { DbserviceService } from '../services/bd.service'; // Importa el servicio DbserviceService
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { AuthService } from '../services/auth.service'; // Importa el servicio
+import { OpenLibraryService } from '../services/open-library.service';
+import { DbserviceService } from '../services/bd.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
-  libros: any[] = []; // Lista de resultados de búsqueda de libros
-  searchQuery: string = ''; // Término de búsqueda
+export class HomePage implements OnInit, OnDestroy {
+  libros: any[] = [];
+  searchQuery: string = '';
+  dbSubscription!: Subscription;
+  openLibrarySubscription!: Subscription;
+  user: string | null = null; // Variable para almacenar el usuario logueado
 
-  constructor(private openLibraryService: OpenLibraryService, private dbService: DbserviceService) {} // Inyecta el servicio DbserviceService
+  constructor(
+    private openLibraryService: OpenLibraryService,
+    private dbService: DbserviceService,
+    private authService: AuthService // Inyectamos el servicio de autenticación
+  ) {}
 
   ngOnInit() {
-    // Escuchar cambios en el estado de la base de datos
-    this.dbService.dbState().subscribe((ready: boolean) => {
+    this.user = this.authService.getUser(); // Obtenemos el usuario logueado
+    this.dbSubscription = this.dbService.dbState().subscribe((ready: boolean) => {
       if (ready) {
-        // Si la base de datos está lista, carga los libros desde la base de datos
-        this.dbService.fetchLibros().subscribe((libros: any[]) => {
-          this.libros = libros;
-        });
+        this.dbService.fetchLibros().subscribe(
+          (libros: any[]) => {
+            this.libros = libros;
+          },
+          (error) => {
+            console.error('Error al cargar los libros de la base de datos:', error);
+          }
+        );
       }
     });
   }
 
-  // Método para buscar libros usando la API de Open Library
   buscarLibros() {
     if (this.searchQuery.trim()) {
-      this.openLibraryService.searchBooks(this.searchQuery).subscribe(
+      this.openLibrarySubscription = this.openLibraryService.searchBooks(this.searchQuery).subscribe(
         (response) => {
           this.libros = response.docs.slice(0, 10).map((libro: any) => ({
             title: libro.title,
@@ -41,6 +53,21 @@ export class HomePage implements OnInit {
           console.error('Error al buscar libros:', error);
         }
       );
+    }
+  }
+
+  // Método para cerrar sesión
+  logout() {
+    this.authService.logout();
+    this.user = null; // Limpiamos el usuario logueado
+  }
+
+  ngOnDestroy() {
+    if (this.dbSubscription) {
+      this.dbSubscription.unsubscribe();
+    }
+    if (this.openLibrarySubscription) {
+      this.openLibrarySubscription.unsubscribe();
     }
   }
 }

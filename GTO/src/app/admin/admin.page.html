@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Administrar Libros</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form (ngSubmit)="updateBook()">
+    <ion-item>
+      <ion-label position="floating">ID del Libro</ion-label>
+      <ion-input [(ngModel)]="bookId" name="bookId" type="number" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Nuevo Título</ion-label>
+      <ion-input [(ngModel)]="newTitle" name="newTitle" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Nuevo Autor</ion-label>
+      <ion-input [(ngModel)]="newAuthor" name="newAuthor" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Nueva Descripción</ion-label>
+      <ion-input [(ngModel)]="newDescription" name="newDescription" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Nuevo Texto Completo</ion-label>
+      <ion-input [(ngModel)]="newText" name="newText" type="text" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Actualizar Libro</ion-button>
+  </form>
+
+  <form (ngSubmit)="deleteBook()">
+    <ion-item>
+      <ion-label position="floating">ID del Libro a Eliminar</ion-label>
+      <ion-input [(ngModel)]="bookId" name="bookIdToDelete" type="number" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" color="danger">Eliminar Libro</ion-button>
+  </form>
+</ion-content>
