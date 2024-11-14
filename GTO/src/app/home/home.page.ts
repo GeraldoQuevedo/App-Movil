@@ -1,8 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../services/auth.service'; // Importa el servicio
+import { AuthService } from '../services/auth.service';
 import { OpenLibraryService } from '../services/open-library.service';
 import { DbserviceService } from '../services/bd.service';
 import { Subscription } from 'rxjs';
+
+// Importa el plugin de cámara de Capacitor
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +19,13 @@ export class HomePage implements OnInit, OnDestroy {
   openLibrarySubscription!: Subscription;
   user: string | null = null; // Variable para almacenar el usuario logueado
 
+  // Nueva propiedad para almacenar la URL de la imagen tomada
+  photoUrl: string | null = null;
+
   constructor(
     private openLibraryService: OpenLibraryService,
     private dbService: DbserviceService,
-    private authService: AuthService // Inyectamos el servicio de autenticación
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -38,6 +44,7 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  // Método para buscar libros en Open Library
   buscarLibros() {
     if (this.searchQuery.trim()) {
       this.openLibrarySubscription = this.openLibraryService.searchBooks(this.searchQuery).subscribe(
@@ -56,10 +63,35 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
+  // Método para tomar una foto con la cámara
+  async takePhoto() {
+    try {
+      const photo = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera
+      });
+  
+      // Verificamos si photo.webPath tiene un valor antes de asignarlo
+      if (photo.webPath) {
+        this.photoUrl = photo.webPath;
+      } else {
+        console.error('No se obtuvo una URL válida para la foto');
+        this.photoUrl = null;
+      }
+  
+      console.log('Foto tomada:', this.photoUrl);
+    } catch (error) {
+      console.error('Error al tomar la foto:', error);
+    }
+  }
+  
+
   // Método para cerrar sesión
   logout() {
     this.authService.logout();
-    this.user = null; // Limpiamos el usuario logueado
+    this.user = null;
   }
 
   ngOnDestroy() {

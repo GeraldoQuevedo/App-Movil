@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { GalleryComponent } from './gallery/gallery.component';
 
 const routes: Routes = [
   // Ruta por defecto
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+  },
+  {
+    path: 'gallery',
+    component: GalleryComponent
   },
   {
     path: 'login',
@@ -30,6 +35,10 @@ const routes: Routes = [
   {
     path: 'prestamos',
     loadChildren: () => import('./pages/prestamos/prestamos.module').then(m => m.PrestamosPageModule)
+  },
+  {
+    path: 'gallery',
+    loadChildren: () => import('./gallery/gallery.component').then(m => m.GalleryComponent)
   },
   {
     path: 'proximos-libros',
